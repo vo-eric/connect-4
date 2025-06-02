@@ -12,31 +12,57 @@ function App() {
     setGameState(newGameState);
   };
 
+  const handleNewGameClick = () => {
+    setGameState(initializeGame());
+  };
+
   return (
-    <div
-      className={clsx('flex-col gap-4', {
-        'pointer-events-none': gameState.winningPlayer,
-      })}
-    >
-      {gameState.board.map((row, i) => {
-        return (
-          <div className='flex'>
-            {row.map((_, j) => {
-              return (
-                <div
-                  className={clsx(
-                    'rounded-full h-12 w-12',
-                    { 'bg-white': gameState.board[i][j] === null },
-                    { 'bg-black': gameState.board[i][j] === 'B' },
-                    { 'bg-red-900': gameState.board[i][j] === 'R' }
-                  )}
-                  onClick={() => handleClick(j)}
-                />
-              );
-            })}
-          </div>
-        );
-      })}
+    <div className='flex flex-col gap-8 text-center'>
+      <p className='text-4xl'>
+        Current Player:{' '}
+        <strong
+          className={clsx({
+            'text-black': gameState.currentPlayer === 'B',
+            'text-red-900': gameState.currentPlayer === 'R',
+          })}
+        >
+          {gameState.currentPlayer === 'B' ? 'Black' : 'Red'}
+        </strong>
+      </p>
+      <div
+        className={clsx('flex-col gap-4 bg-blue-800 p-2 rounded-lg ', {
+          'pointer-events-none': gameState.winningPlayer,
+        })}
+      >
+        {gameState.board.map((row, i) => {
+          return (
+            <div className='flex p-1 gap-2'>
+              {row.map((_, j) => {
+                return (
+                  <div
+                    className={clsx(
+                      'rounded-full h-12 w-12',
+                      { 'bg-white': gameState.board[i][j] === null },
+                      { 'bg-black': gameState.board[i][j] === 'B' },
+                      { 'bg-red-900': gameState.board[i][j] === 'R' }
+                    )}
+                    onClick={() => handleClick(j)}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+      <button
+        className='rounded-lg bg-white py-2 px-4 text-black'
+        onClick={handleNewGameClick}
+      >
+        {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
+      </button>
+      <p className='min-h-6'>
+        {gameState.winningPlayer && `Player ${gameState.winningPlayer} wins!`}
+      </p>
     </div>
   );
 }
