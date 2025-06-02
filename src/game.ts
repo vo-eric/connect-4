@@ -4,8 +4,6 @@
 State:
   Current player
   Game board/state
-
-
 */
 
 export type Player = 'R' | 'B';
@@ -15,7 +13,7 @@ export type Winner = Player | undefined;
 export type Game = {
   board: Board;
   currentPlayer: Player;
-  hasWinner?: Winner;
+  winningPlayer?: Winner;
 };
 
 export const initializeGame = (): Game => {
@@ -30,6 +28,7 @@ export const initializeGame = (): Game => {
 export const determinePlayer = (currentPlayer: Player): Player => {
   return currentPlayer === 'B' ? 'R' : 'B';
 };
+
 /*
 move(board): Board 
 Select a column
@@ -60,10 +59,59 @@ export const move = (
     }
   }
 
-  // console.log('updated', newBoard);
+  const hasWinner = determineWinner(newBoard, currentPlayer);
+
+  if (hasWinner) {
+    console.log(newBoard);
+    return {
+      board: newBoard,
+      currentPlayer,
+      winningPlayer: currentPlayer,
+    };
+  }
 
   return {
     board: newBoard,
     currentPlayer: determinePlayer(currentPlayer),
   };
+};
+
+export const determineWinner = (
+  board: Board,
+  currentPlayer: Player
+): Player | undefined => {
+  const countMatches = (
+    row: number,
+    col: number,
+    direction: [number, number] //
+  ): number => {
+    if (
+      row < 0 ||
+      row >= board.length ||
+      col < 0 ||
+      col >= board[0].length ||
+      board[row][col] !== currentPlayer ||
+      board[row][col] === null
+    ) {
+      return 0;
+    }
+
+    return 1 + countMatches(row + direction[1], col + direction[0], direction);
+  };
+
+  for (let row = 0; row < board.length; row++) {
+    for (let col = 0; col < board[0].length; col++) {
+      if (board[row][col] === currentPlayer) {
+        const rightCount = countMatches(row, col, [0, 1]);
+        const downCount = countMatches(row, col, [1, 0]);
+        const diagonalCount = countMatches(row, col, [1, 1]);
+
+        if (rightCount === 4 || downCount === 4 || diagonalCount === 4) {
+          return currentPlayer;
+        }
+      }
+    }
+  }
+
+  return undefined;
 };
