@@ -1,11 +1,3 @@
-/*
-
-
-State:
-  Current player
-  Game board/state
-*/
-
 export type Player = 'R' | 'B';
 export type Cell = Player | null;
 export type Board = Cell[][];
@@ -29,13 +21,6 @@ export const determinePlayer = (currentPlayer: Player): Player => {
   return currentPlayer === 'B' ? 'R' : 'B';
 };
 
-/*
-move(board): Board 
-Select a column
-From there, go down rows (starting at 0) until the next row is either the bottom or is NOT null
-  If that is satisfied, set the current cell to the current player
-*/
-
 export const move = (
   board: Board,
   column: number,
@@ -43,7 +28,6 @@ export const move = (
 ): Game => {
   const newBoard = structuredClone(board);
 
-  //exceptions
   if (
     column < 0 ||
     column >= newBoard[0].length ||
@@ -90,7 +74,7 @@ export const determineWinner = (
   const countMatches = (
     row: number,
     col: number,
-    direction: [number, number] //
+    direction: [number, number]
   ): number => {
     if (
       row < 0 ||
