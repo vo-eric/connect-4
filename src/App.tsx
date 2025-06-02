@@ -2,18 +2,37 @@ import { useState } from 'react';
 import './App.css';
 import { initializeGame, move, type Game } from './game';
 import clsx from 'clsx';
+import useSound from 'use-sound';
+import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
 
 function App() {
   const [gameState, setGameState] = useState<Game>(initializeGame());
+  const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
   const handleClick = (col: number) => {
     const newGameState = move(gameState.board, col, gameState.currentPlayer);
-    console.log(newGameState);
+
+    if (newGameState.winningPlayer === 'tie') {
+      playSound();
+    }
     setGameState(newGameState);
   };
 
   const handleNewGameClick = () => {
     setGameState(initializeGame());
+  };
+
+  const renderFinishedState = () => {
+    switch (gameState.winningPlayer) {
+      case 'B':
+        return <p className='text-4xl text-black'>Black wins!</p>;
+      case 'R':
+        return <p className='text-4xl text-red-900'>Red wins!</p>;
+      case 'tie':
+        return <p className='text-4xl text-green'>It's a tie!</p>;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -55,22 +74,13 @@ function App() {
         })}
       </div>
       <button
-        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-black hover:bg-black hover:text-white cursor-pointer'
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue'
         onClick={handleNewGameClick}
       >
         {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
       </button>
       {gameState.winningPlayer && (
-        <div className='winner min-h-10'>
-          <p
-            className={clsx('text-4xl', {
-              'text-black': gameState.winningPlayer === 'B',
-              'text-red-900': gameState.winningPlayer === 'R',
-            })}
-          >
-            {gameState.winningPlayer === 'B' ? 'Black wins!' : 'Red wins!'}
-          </p>
-        </div>
+        <div className='winner min-h-10'>{renderFinishedState()}</div>
       )}
     </div>
   );

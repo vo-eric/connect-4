@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-bg-blue: #64a2d9;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

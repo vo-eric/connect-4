@@ -9,7 +9,7 @@ State:
 export type Player = 'R' | 'B';
 export type Cell = Player | null;
 export type Board = Cell[][];
-export type Winner = Player | undefined;
+export type Winner = Player | 'tie' | undefined;
 export type Game = {
   board: Board;
   currentPlayer: Player;
@@ -62,11 +62,18 @@ export const move = (
   const hasWinner = determineWinner(newBoard, currentPlayer);
 
   if (hasWinner) {
-    console.log(newBoard);
     return {
       board: newBoard,
       currentPlayer,
       winningPlayer: currentPlayer,
+    };
+  }
+
+  if (!hasWinner && newBoard.flat().every((cell) => cell !== null)) {
+    return {
+      board: newBoard,
+      currentPlayer,
+      winningPlayer: 'tie',
     };
   }
 
