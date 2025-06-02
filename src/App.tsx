@@ -13,7 +13,11 @@ function App() {
   };
 
   return (
-    <div className='flex-col gap-4'>
+    <div
+      className={clsx('flex-col gap-4', {
+        'pointer-events-none': gameState.winningPlayer,
+      })}
+    >
       {gameState.board.map((row, i) => {
         return (
           <div className='flex'>
