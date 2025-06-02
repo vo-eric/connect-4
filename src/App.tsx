@@ -20,14 +20,14 @@ function App() {
     <div className='flex flex-col gap-8 text-center'>
       <p className='text-4xl'>
         Current Player:{' '}
-        <strong
+        <span
           className={clsx({
             'text-black': gameState.currentPlayer === 'B',
             'text-red-900': gameState.currentPlayer === 'R',
           })}
         >
           {gameState.currentPlayer === 'B' ? 'Black' : 'Red'}
-        </strong>
+        </span>
       </p>
       <div
         className={clsx('flex-col gap-4 bg-blue-800 p-2 rounded-lg ', {
@@ -55,14 +55,23 @@ function App() {
         })}
       </div>
       <button
-        className='rounded-lg bg-white py-2 px-4 text-black'
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-black hover:bg-black hover:text-white cursor-pointer'
         onClick={handleNewGameClick}
       >
         {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
       </button>
-      <p className='min-h-6'>
-        {gameState.winningPlayer && `Player ${gameState.winningPlayer} wins!`}
-      </p>
+      {gameState.winningPlayer && (
+        <div className='winner min-h-10'>
+          <p
+            className={clsx('text-4xl', {
+              'text-black': gameState.winningPlayer === 'B',
+              'text-red-900': gameState.winningPlayer === 'R',
+            })}
+          >
+            {gameState.winningPlayer === 'B' ? 'Black wins!' : 'Red wins!'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
