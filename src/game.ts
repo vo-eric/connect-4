@@ -104,9 +104,15 @@ export const determineWinner = (
       if (board[row][col] === currentPlayer) {
         const rightCount = countMatches(row, col, [0, 1]);
         const downCount = countMatches(row, col, [1, 0]);
-        const diagonalCount = countMatches(row, col, [1, 1]);
+        const bottomRightDiagonalCount = countMatches(row, col, [1, 1]);
+        const topRightDiagonalCount = countMatches(row, col, [-1, 1]);
 
-        if (rightCount === 4 || downCount === 4 || diagonalCount === 4) {
+        if (
+          rightCount === 4 ||
+          downCount === 4 ||
+          bottomRightDiagonalCount === 4 ||
+          topRightDiagonalCount === 4
+        ) {
           return currentPlayer;
         }
       }
