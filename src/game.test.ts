@@ -1,5 +1,11 @@
 import { test, assert, describe, expect } from 'vitest';
-import { determinePlayer, initializeGame, move } from './game';
+import {
+  determinePlayer,
+  determineWinner,
+  initializeGame,
+  move,
+  type Board,
+} from './game';
 
 test('game initializes a valid game state', () => {
   assert.deepEqual(initializeGame(), {
@@ -122,5 +128,231 @@ describe('a player can place a piece', () => {
       ],
       currentPlayer: 'B',
     });
+  });
+
+  test('a player that makes a winning move should be declared the winner', () => {
+    const game = initializeGame();
+    game.board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['B', null, null, null, null, null, null],
+      ['B', 'R', null, null, null, null, null],
+      ['B', 'R', 'B', 'R', null, null, null],
+    ];
+
+    const winningGame = move(game.board, 0, 'B');
+
+    assert.deepEqual(winningGame, {
+      board: [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        ['B', null, null, null, null, null, null],
+        ['B', null, null, null, null, null, null],
+        ['B', 'R', null, null, null, null, null],
+        ['B', 'R', 'B', 'R', null, null, null],
+      ],
+      currentPlayer: 'B',
+      winningPlayer: 'B',
+    });
+  });
+
+  test('a player that makes a winning move should be declared the winner', () => {
+    const game = initializeGame();
+    game.board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['B', null, null, null, null, null, null],
+      ['B', 'R', null, null, null, null, null],
+      ['B', 'B', 'B', null, null, null, null],
+    ];
+
+    const winningGame = move(game.board, 3, 'B');
+
+    assert.deepEqual(winningGame, {
+      board: [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        ['R', null, null, null, null, null, null],
+        ['B', null, null, null, null, null, null],
+        ['B', 'R', null, null, null, null, null],
+        ['B', 'B', 'B', 'B', null, null, null],
+      ],
+      currentPlayer: 'B',
+      winningPlayer: 'B',
+    });
+  });
+
+  test('a player that makes a winning move should be declared the winner', () => {
+    const game = initializeGame();
+    game.board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['B', 'R', null, null, null, null, null],
+      ['B', 'R', 'R', null, null, null, null],
+      ['B', 'B', 'B', null, null, null, null],
+    ];
+
+    const winningGame = move(game.board, 3, 'R');
+
+    assert.deepEqual(winningGame, {
+      board: [
+        [null, null, null, null, null, null, null],
+        [null, null, null, null, null, null, null],
+        ['R', null, null, null, null, null, null],
+        ['B', 'R', null, null, null, null, null],
+        ['B', 'R', 'R', null, null, null, null],
+        ['B', 'B', 'B', 'R', null, null, null],
+      ],
+      currentPlayer: 'R',
+      winningPlayer: 'R',
+    });
+  });
+});
+
+describe('determine winner should correctly parse the board', () => {
+  test('an empty board should return undefined', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+    ];
+    expect(determineWinner(board, 'B')).toBe(undefined);
+  });
+
+  test('a board with no winner should return undefined', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', 'B', 'B', 'R', null, null, null],
+    ];
+    expect(determineWinner(board, 'B')).toBe(undefined);
+  });
+  test('', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', 'B', null, 'R', 'B', null, null],
+    ];
+    expect(determineWinner(board, 'B')).toBe(undefined);
+  });
+
+  test('four matches in a row should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', 'R', 'R', 'R', null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).toBe('R');
+  });
+
+  test('four matches in a row should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', 'R', 'R', 'R', null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).not.toBe('B');
+  });
+
+  test('a board with no winner should return undefined', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['B', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).toBe(undefined);
+  });
+
+  test('four matches in a column should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).toBe('R');
+  });
+
+  test('four matches in a column should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).not.toBe('B');
+  });
+
+  test('four matches in a diagonal should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', 'R', null, null, null, null, null],
+      ['R', 'B', 'R', null, null, null, null],
+      ['B', 'B', 'R', 'R', null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).not.toBe('B');
+  });
+
+  test('four matches in a diagonal should return the winning player', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', 'R', null, null, null, null, null],
+      ['R', 'B', 'R', null, null, null, null],
+      ['B', 'B', 'R', 'R', null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).toBe('R');
+  });
+
+  test('a board with no winner should return undefined', () => {
+    const board: Board = [
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      ['R', null, null, null, null, null, null],
+      ['R', 'R', null, null, null, null, null],
+      ['R', 'B', 'R', null, null, null, null],
+      ['B', 'B', 'R', 'B', null, null, null],
+    ];
+    expect(determineWinner(board, 'R')).toBe(undefined);
+  });
+
+  test('a board with no winner should return undefined', () => {
+    const board: Board = [
+      ['R', 'B', 'R', 'R', 'R', 'B', 'B'],
+      ['B', 'R', 'R', 'B', 'B', 'R', 'R'],
+      ['B', 'B', 'B', 'R', 'B', 'B', 'B'],
+      ['R', 'R', 'R', 'B', 'B', 'R', 'R'],
+      ['R', 'R', 'R', 'B', 'B', 'R', 'B'],
+      ['B', 'R', 'R', 'R', 'B', 'B', 'B'],
+    ];
+    expect(determineWinner(board, 'R')).toBe(undefined);
   });
 });
