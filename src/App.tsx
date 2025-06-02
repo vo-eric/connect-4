@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import { initializeGame, move, type Game } from './game';
+import clsx from 'clsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState<Game>(initializeGame());
+
+  const handleClick = (col: number) => {
+    const newGameState = move(gameState.board, col, gameState.currentPlayer);
+    console.log(newGameState);
+    setGameState(newGameState);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className='flex-col gap-4'>
+      {gameState.board.map((row, i) => {
+        return (
+          <div className='flex'>
+            {row.map((_, j) => {
+              return (
+                <div
+                  className={clsx(
+                    'rounded-full h-12 w-12',
+                    { 'bg-white': gameState.board[i][j] === null },
+                    { 'bg-black': gameState.board[i][j] === 'B' },
+                    { 'bg-red-900': gameState.board[i][j] === 'R' }
+                  )}
+                  onClick={() => handleClick(j)}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
-export default App
+export default App;
