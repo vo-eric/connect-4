@@ -7,6 +7,7 @@ import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
 
 function App() {
   const [gameState, setGameState] = useState<Game>(initializeGame());
+  const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
   const handleClick = (col: number) => {
@@ -60,12 +61,21 @@ function App() {
                 return (
                   <div
                     className={clsx(
-                      'rounded-full h-12 w-12',
-                      { 'bg-white': gameState.board[i][j] === null },
+                      'rounded-full h-12 w-12 transition duration-300',
+                      {
+                        'bg-white':
+                          gameState.board[i][j] === null && hoveredColumn !== j,
+                      },
+                      {
+                        'bg-gray-300':
+                          hoveredColumn === j && gameState.board[i][j] === null,
+                      },
                       { 'bg-black': gameState.board[i][j] === 'B' },
                       { 'bg-red-900': gameState.board[i][j] === 'R' }
                     )}
                     onClick={() => handleClick(j)}
+                    onMouseEnter={() => setHoveredColumn(j)}
+                    onMouseLeave={() => setHoveredColumn(null)}
                   />
                 );
               })}
@@ -74,7 +84,7 @@ function App() {
         })}
       </div>
       <button
-        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue'
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
         onClick={handleNewGameClick}
       >
         {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
