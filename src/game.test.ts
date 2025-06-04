@@ -9,10 +9,6 @@ import {
 
 test('game initializes a valid game state', () => {
   const newGame = initializeGame();
-  console.log('********');
-
-  console.log(assert);
-  console.log('********');
   assert.deepEqual(newGame, {
     id: newGame.id,
     board: [
