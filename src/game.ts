@@ -1,7 +1,7 @@
 export type Player = 'R' | 'B';
 export type Cell = Player | null;
 export type Board = Cell[][];
-export type Winner = Player | 'tie' | undefined;
+export type Winner = Player | 'tie' | undefined | null;
 export type Game = {
   id: string;
   board: Board;
