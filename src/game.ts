@@ -66,15 +66,6 @@ export const move = (
     };
   }
 
-  // console.log('*********');
-
-  // console.log({
-  //   id,
-  //   board: newBoard,
-  //   currentPlayer: determinePlayer(currentPlayer),
-  // });
-  // console.log('*********');
-
   return {
     id,
     board: newBoard,
