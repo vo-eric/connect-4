@@ -3,6 +3,7 @@ export type Cell = Player | null;
 export type Board = Cell[][];
 export type Winner = Player | 'tie' | undefined;
 export type Game = {
+  id: string;
   board: Board;
   currentPlayer: Player;
   winningPlayer?: Winner;
@@ -12,6 +13,7 @@ export const initializeGame = (): Game => {
   const newBoard = new Array(6).fill(0).map(() => new Array(7).fill(null));
 
   return {
+    id: crypto.randomUUID(),
     board: newBoard,
     currentPlayer: 'B',
   };
@@ -22,6 +24,7 @@ export const determinePlayer = (currentPlayer: Player): Player => {
 };
 
 export const move = (
+  id: string,
   board: Board,
   column: number,
   currentPlayer: Player
@@ -33,7 +36,7 @@ export const move = (
     column >= newBoard[0].length ||
     newBoard[0][column] !== null
   ) {
-    return { board, currentPlayer };
+    return { id, board, currentPlayer };
   }
 
   for (let row = 0; row <= newBoard.length - 1; row++) {
@@ -47,6 +50,7 @@ export const move = (
 
   if (hasWinner) {
     return {
+      id,
       board: newBoard,
       currentPlayer,
       winningPlayer: currentPlayer,
@@ -55,6 +59,7 @@ export const move = (
 
   if (!hasWinner && newBoard.flat().every((cell) => cell !== null)) {
     return {
+      id,
       board: newBoard,
       currentPlayer,
       winningPlayer: 'tie',
@@ -62,6 +67,7 @@ export const move = (
   }
 
   return {
+    id,
     board: newBoard,
     currentPlayer: determinePlayer(currentPlayer),
   };

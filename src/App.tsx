@@ -1,30 +1,41 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './App.css';
-import { initializeGame, move, type Game } from './game';
+import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
 import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
+import { ConnectFourClientAPI } from '../api/connectFour';
 
 function App() {
-  const [gameState, setGameState] = useState<Game>(initializeGame());
+  const api = useMemo(() => new ConnectFourClientAPI(), []);
+  const [gameState, setGameState] = useState<Game | undefined>(undefined);
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
-  const handleClick = (col: number) => {
-    const newGameState = move(gameState.board, col, gameState.currentPlayer);
+  const initializeGame = async () => {
+    const game = await api.createGame();
+    setGameState(game);
+  };
 
-    if (newGameState.winningPlayer === 'tie') {
+  const handleClick = async (column: number) => {
+    if (!gameState) {
+      return;
+    }
+
+    const updatedGame = await api.move(gameState.id, column);
+
+    if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
-    setGameState(newGameState);
+    setGameState(updatedGame);
   };
 
   const handleNewGameClick = () => {
-    setGameState(initializeGame());
+    initializeGame();
   };
 
   const renderFinishedState = () => {
-    switch (gameState.winningPlayer) {
+    switch (gameState!.winningPlayer) {
       case 'B':
         return <p className='text-4xl text-black'>Black wins!</p>;
       case 'R':
@@ -35,6 +46,17 @@ function App() {
         return null;
     }
   };
+
+  if (!gameState) {
+    return (
+      <button
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
+        onClick={() => initializeGame()}
+      >
+        Start a new game
+      </button>
+    );
+  }
 
   return (
     <div className='flex flex-col gap-8 text-center'>

@@ -8,7 +8,9 @@ import {
 } from './game';
 
 test('game initializes a valid game state', () => {
-  assert.deepEqual(initializeGame(), {
+  const newGame = initializeGame();
+  assert.deepEqual(newGame, {
+    id: newGame.id,
     board: [
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
@@ -38,9 +40,10 @@ describe('game correctly updates the current player', () => {
 describe('a player can place a piece', () => {
   test('a player can place a piece on an empty column', () => {
     const game = initializeGame();
-    const newGameState = move(game.board, 2, 'B');
+    const newGameState = move(game.id, game.board, 2, 'B');
 
     assert.deepEqual(newGameState, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -55,10 +58,11 @@ describe('a player can place a piece', () => {
 
   test('a player can place a piece on an column with an existing piece', () => {
     let game = initializeGame();
-    game = move(game.board, 2, 'B');
-    game = move(game.board, 2, 'R');
+    game = move(game.id, game.board, 2, 'B');
+    game = move(game.id, game.board, 2, 'R');
 
     assert.deepEqual(game, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -81,9 +85,10 @@ describe('a player can place a piece', () => {
       [null, null, 'R', null, null, null, null],
       [null, null, 'B', null, null, null, null],
     ];
-    game = move(game.board, 2, 'B');
+    game = move(game.id, game.board, 2, 'B');
 
     assert.deepEqual(game, {
+      id: game.id,
       board: [
         [null, null, 'R', null, null, null, null],
         [null, null, 'B', null, null, null, null],
@@ -98,9 +103,10 @@ describe('a player can place a piece', () => {
 
   test('a player cannot place out of bounds', () => {
     let game = initializeGame();
-    game = move(game.board, -1, 'B');
+    game = move(game.id, game.board, -1, 'B');
 
     assert.deepEqual(game, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -115,9 +121,10 @@ describe('a player can place a piece', () => {
 
   test('a player cannot place out of bounds', () => {
     let game = initializeGame();
-    game = move(game.board, 8, 'B');
+    game = move(game.id, game.board, 8, 'B');
 
     assert.deepEqual(game, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -141,9 +148,10 @@ describe('a player can place a piece', () => {
       ['B', 'R', 'B', 'R', null, null, null],
     ];
 
-    const winningGame = move(game.board, 0, 'B');
+    const winningGame = move(game.id, game.board, 0, 'B');
 
     assert.deepEqual(winningGame, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -168,9 +176,10 @@ describe('a player can place a piece', () => {
       ['B', 'B', 'B', null, null, null, null],
     ];
 
-    const winningGame = move(game.board, 3, 'B');
+    const winningGame = move(game.id, game.board, 3, 'B');
 
     assert.deepEqual(winningGame, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
@@ -195,9 +204,10 @@ describe('a player can place a piece', () => {
       ['B', 'B', 'B', null, null, null, null],
     ];
 
-    const winningGame = move(game.board, 3, 'R');
+    const winningGame = move(game.id, game.board, 3, 'R');
 
     assert.deepEqual(winningGame, {
+      id: game.id,
       board: [
         [null, null, null, null, null, null, null],
         [null, null, null, null, null, null, null],
