@@ -1,25 +1,19 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import './App.css';
 import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
 import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
+import { ConnectFourClientAPI } from '../api/connectFour';
 
 function App() {
+  const api = useMemo(() => new ConnectFourClientAPI(), []);
   const [gameState, setGameState] = useState<Game | undefined>(undefined);
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
   const initializeGame = async () => {
-    const response = await fetch('/api/game', {
-      method: 'POST',
-    });
-
-    if (!response.ok) {
-      return;
-    }
-
-    const game = await response.json();
+    const game = await api.createGame();
     setGameState(game);
   };
 
@@ -28,21 +22,12 @@ function App() {
       return;
     }
 
-    const response = await fetch(`/api/game/${gameState.id}/move`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        column,
-      }),
-    });
-    const newGameState = await response.json();
+    const updatedGame = await api.move(gameState.id, column);
 
-    if (newGameState.winningPlayer === 'tie') {
+    if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
-    setGameState(newGameState);
+    setGameState(updatedGame);
   };
 
   const handleNewGameClick = () => {
@@ -63,7 +48,14 @@ function App() {
   };
 
   if (!gameState) {
-    return <button onClick={() => initializeGame()}>Start a new game</button>;
+    return (
+      <button
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
+        onClick={() => initializeGame()}
+      >
+        Start a new game
+      </button>
+    );
   }
 
   return (

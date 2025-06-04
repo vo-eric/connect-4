@@ -1,6 +1,6 @@
 import express from 'express';
 import ViteExpress from 'vite-express';
-import ConnectFourAPI from './api/connectFour';
+import { ConnectFourAPI } from './api/connectFour';
 
 const app = express();
 app.use(express.json());

@@ -1,5 +1,5 @@
 import { assert, describe, expect, test } from 'vitest';
-import ConnectFourAPI from './connectFour';
+import { ConnectFourAPI } from './connectFour';
 
 describe('create game', () => {
   const connectFour = new ConnectFourAPI();

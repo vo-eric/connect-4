@@ -6,7 +6,7 @@ export interface ConnectFourAPIInterface {
   getGame: (gameId: string) => Promise<Game>;
 }
 
-export default class ConnectFourAPI implements ConnectFourAPIInterface {
+export class ConnectFourAPI implements ConnectFourAPIInterface {
   private matches: Map<string, Game> = new Map();
 
   async createGame() {
@@ -37,5 +37,38 @@ export default class ConnectFourAPI implements ConnectFourAPIInterface {
     this.matches.set(gameId, updatedGame);
 
     return updatedGame;
+  }
+}
+
+export class ConnectFourClientAPI implements ConnectFourClientAPI {
+  async createGame() {
+    const response = await fetch('/api/game', {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    return await response.json();
+  }
+
+  async getGame(gameId: string) {
+    const game = await fetch(`api/game/${gameId}`);
+    return game;
+  }
+
+  async move(gameId: string, column: number) {
+    const response = await fetch(`/api/game/${gameId}/move`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        column,
+      }),
+    });
+    const newGameState = await response.json();
+    return newGameState;
   }
 }
