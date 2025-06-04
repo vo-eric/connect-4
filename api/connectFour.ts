@@ -28,6 +28,14 @@ export default class ConnectFourAPI implements ConnectFourAPIInterface {
   async move(gameId: string, column: number) {
     const game = await this.getGame(gameId);
 
-    return makeMove(game.id, game.board, column, game.currentPlayer);
+    const updatedGame = makeMove(
+      game.id,
+      game.board,
+      column,
+      game.currentPlayer
+    );
+    this.matches.set(gameId, updatedGame);
+
+    return updatedGame;
   }
 }
