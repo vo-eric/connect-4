@@ -3,11 +3,14 @@ import ViteExpress from 'vite-express';
 import ConnectFourAPI from './api/connectFour';
 
 const app = express();
+const connectFour = new ConnectFourAPI();
 
-app.get('/message', (_, res) => res.send('Hello from express!'));
+app.get('/api/games/:id', async (req, res) => {
+  const game = await connectFour.getGame(req.params.id);
+  return res.json(game);
+});
 
-app.post('/game', async (req, res) => {
-  const connectFour = new ConnectFourAPI();
+app.post('/api/game', async (req, res) => {
   const newGame = await connectFour.createGame();
   res.json(newGame);
 });
