@@ -142,7 +142,7 @@ function App() {
           {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
         </button>
         {gameState.winningPlayer && (
-          <div className='winner min-h-10 absolute'>
+          <div className='winner min-h-10 absolute top-0 left-0'>
             {renderFinishedState()}
           </div>
         )}
