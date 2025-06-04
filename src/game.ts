@@ -1,15 +1,7 @@
-/*
-
-
-State:
-  Current player
-  Game board/state
-*/
-
 export type Player = 'R' | 'B';
 export type Cell = Player | null;
 export type Board = Cell[][];
-export type Winner = Player | undefined;
+export type Winner = Player | 'tie' | undefined;
 export type Game = {
   board: Board;
   currentPlayer: Player;
@@ -29,13 +21,6 @@ export const determinePlayer = (currentPlayer: Player): Player => {
   return currentPlayer === 'B' ? 'R' : 'B';
 };
 
-/*
-move(board): Board 
-Select a column
-From there, go down rows (starting at 0) until the next row is either the bottom or is NOT null
-  If that is satisfied, set the current cell to the current player
-*/
-
 export const move = (
   board: Board,
   column: number,
@@ -43,7 +28,6 @@ export const move = (
 ): Game => {
   const newBoard = structuredClone(board);
 
-  //exceptions
   if (
     column < 0 ||
     column >= newBoard[0].length ||
@@ -62,11 +46,18 @@ export const move = (
   const hasWinner = determineWinner(newBoard, currentPlayer);
 
   if (hasWinner) {
-    console.log(newBoard);
     return {
       board: newBoard,
       currentPlayer,
       winningPlayer: currentPlayer,
+    };
+  }
+
+  if (!hasWinner && newBoard.flat().every((cell) => cell !== null)) {
+    return {
+      board: newBoard,
+      currentPlayer,
+      winningPlayer: 'tie',
     };
   }
 
@@ -83,7 +74,7 @@ export const determineWinner = (
   const countMatches = (
     row: number,
     col: number,
-    direction: [number, number] //
+    direction: [number, number]
   ): number => {
     if (
       row < 0 ||
@@ -104,9 +95,15 @@ export const determineWinner = (
       if (board[row][col] === currentPlayer) {
         const rightCount = countMatches(row, col, [0, 1]);
         const downCount = countMatches(row, col, [1, 0]);
-        const diagonalCount = countMatches(row, col, [1, 1]);
+        const bottomRightDiagonalCount = countMatches(row, col, [1, 1]);
+        const topRightDiagonalCount = countMatches(row, col, [-1, 1]);
 
-        if (rightCount === 4 || downCount === 4 || diagonalCount === 4) {
+        if (
+          rightCount === 4 ||
+          downCount === 4 ||
+          bottomRightDiagonalCount === 4 ||
+          topRightDiagonalCount === 4
+        ) {
           return currentPlayer;
         }
       }
