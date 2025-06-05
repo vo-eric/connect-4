@@ -2,12 +2,12 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import type { ConnectFourAPIInterface } from '../../api/connectFour';
 import { initializeGame, move, type Game } from '../game';
 import { gamesTable } from './schema';
-import { eq } from 'drizzle-orm';
+import { eq, isNotNull, isNull } from 'drizzle-orm';
 
 export class ConnectFourDbAPI implements ConnectFourAPIInterface {
   private db = drizzle(process.env.DATABASE_URL!);
 
-  async createGame() {
+  async createGame(): Promise<Game> {
     const game = await initializeGame();
     const { id, board, currentPlayer } = game;
 
@@ -29,7 +29,7 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
     return game[0];
   }
 
-  async move(gameId: string, column: number) {
+  async move(gameId: string, column: number): Promise<Game> {
     const game = await this.db
       .select()
       .from(gamesTable)
@@ -50,5 +50,21 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
       .where(eq(gamesTable.id, gameId));
 
     return updatedGame;
+  }
+
+  async getUnfinishedGames(): Promise<Game[]> {
+    const games = await this.db
+      .select()
+      .from(gamesTable)
+      .where(isNull(gamesTable.winningPlayer));
+    return games;
+  }
+
+  async getFinishedGames(): Promise<Game[]> {
+    const games = await this.db
+      .select()
+      .from(gamesTable)
+      .where(isNotNull(gamesTable.winningPlayer));
+    return games;
   }
 }

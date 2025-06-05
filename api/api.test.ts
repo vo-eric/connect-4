@@ -1,4 +1,4 @@
-import { assert, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { ConnectFourAPI } from './connectFour';
 
 describe('create game', () => {
@@ -47,7 +47,7 @@ describe('move', async () => {
     const updatedGame = await connectFour.move(fetchedGame.id, 0);
 
     expect(updatedGame.currentPlayer).toBe('R');
-    assert.deepEqual(updatedGame.board, [
+    expect(updatedGame.board).toEqual([
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
@@ -55,5 +55,23 @@ describe('move', async () => {
       [null, null, null, null, null, null, null],
       ['B', null, null, null, null, null, null],
     ]);
+  });
+
+  describe('API should fetch games', async () => {
+    await connectFour.createGame();
+    await connectFour.createGame();
+    const gameThree = await connectFour.createGame();
+    gameThree.winningPlayer = 'B';
+
+    test('getFinishedGames() should fetch all finished games', async () => {
+      const finishedGames = await connectFour.getFinishedGames();
+      expect(finishedGames.length).toBe(1);
+      expect(finishedGames[0].id).toBe(gameThree.id);
+    });
+
+    test('getUnfinishedGames() should fetch all finished games', async () => {
+      const getUnfinishedGames = await connectFour.getUnfinishedGames();
+      expect(getUnfinishedGames.length).toBe(2);
+    });
   });
 });

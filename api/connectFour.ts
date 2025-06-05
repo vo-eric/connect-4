@@ -4,6 +4,8 @@ export interface ConnectFourAPIInterface {
   createGame: () => Promise<Game>;
   move: (gameId: string, column: number) => Promise<Game>;
   getGame: (gameId: string) => Promise<Game>;
+  getUnfinishedGames: () => Promise<Game[]>;
+  getFinishedGames: () => Promise<Game[]>;
 }
 
 export class ConnectFourAPI implements ConnectFourAPIInterface {
@@ -38,9 +40,21 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
 
     return updatedGame;
   }
+
+  async getFinishedGames() {
+    const allGames = Array.from(this.matches.values());
+    const finishedGames = allGames.filter((game) => !!game.winningPlayer);
+    return finishedGames;
+  }
+
+  async getUnfinishedGames() {
+    const allGames = Array.from(this.matches.values());
+    const getUnfinishedGames = allGames.filter((game) => !game.winningPlayer);
+    return getUnfinishedGames;
+  }
 }
 
-export class ConnectFourClientAPI implements ConnectFourClientAPI {
+export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   async createGame() {
     const response = await fetch('/api/game', {
       method: 'POST',
@@ -72,4 +86,18 @@ export class ConnectFourClientAPI implements ConnectFourClientAPI {
     const newGameState = await response.json();
     return newGameState;
   }
+  // TODO: try using query params
+  async getFinishedGames() {
+    const response = await fetch(`/api/games/finished`);
+    const games = await response.json();
+    return games;
+  }
+
+  async getUnfinishedGames() {
+    const response = await fetch(`/api/games/unfinished`);
+    const games = await response.json();
+    return games;
+  }
+
+  //END TODO
 }

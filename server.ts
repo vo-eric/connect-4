@@ -11,6 +11,18 @@ app.get('/api/game/:id', async (req, res) => {
   return res.json(game);
 });
 
+//TODO: try using query params
+app.get('/api/games/finished', async (req, res) => {
+  const games = await connectFour.getFinishedGames();
+  return res.json(games);
+});
+
+app.get('/api/games/unfinished', async (req, res) => {
+  const games = await connectFour.getUnfinishedGames();
+  return res.json(games);
+});
+
+//END TODO
 app.post('/api/game', async (_, res) => {
   const newGame = await connectFour.createGame();
   return res.json(newGame);
