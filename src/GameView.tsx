@@ -1,21 +1,56 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
 import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
 import { ConnectFourClientAPI } from '../api/connectFour';
 import Celebration from './Celebration';
+import { useLoaderData } from 'react-router';
+
+const api = new ConnectFourClientAPI();
 
 export default function GameView() {
-  const api = useMemo(() => new ConnectFourClientAPI(), []);
-  const [gameState, setGameState] = useState<Game | undefined>(undefined);
+  const { game: fetchedGame } = useLoaderData<{ game: Game }>();
+  const [gameState, setGameState] = useState<Game>(fetchedGame);
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
+  /*
+  NOTE: USE THIS FOR NEW GAME CREATION
+  
   const initializeGame = async () => {
-    const game = await api.createGame();
+    const game = await api.getGame(gameId);
     setGameState(game);
   };
+
+  const handleNewGameClick = () => {
+    initializeGame();
+  };
+
+  if (!gameState) {
+    return (
+      <button
+        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
+        onClick={() => initializeGame()}
+      >
+        Start a new game
+      </button>
+    );
+  }
+
+
+  NOTE: potentially use this for rematches
+    const handleNewGameClick = () => {
+      initializeGame();
+    };
+
+    <button
+          className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
+          onClick={handleNewGameClick}
+        >
+          {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
+        </button>
+  */
 
   const handleClick = async (column: number) => {
     if (!gameState) {
@@ -28,10 +63,6 @@ export default function GameView() {
       playSound();
     }
     setGameState(updatedGame);
-  };
-
-  const handleNewGameClick = () => {
-    initializeGame();
   };
 
   const renderFinishedState = () => {
@@ -84,14 +115,7 @@ export default function GameView() {
   };
 
   if (!gameState) {
-    return (
-      <button
-        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
-        onClick={() => initializeGame()}
-      >
-        Start a new game
-      </button>
-    );
+    return <div>Loading game...</div>;
   }
 
   return (
@@ -134,12 +158,7 @@ export default function GameView() {
             );
           })}
         </div>
-        <button
-          className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
-          onClick={handleNewGameClick}
-        >
-          {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
-        </button>
+
         {gameState.winningPlayer && (
           <div className='winner min-h-10 absolute top-0 left-0'>
             {renderFinishedState()}
