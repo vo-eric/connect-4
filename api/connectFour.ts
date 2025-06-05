@@ -54,7 +54,8 @@ export class ConnectFourClientAPI implements ConnectFourClientAPI {
   }
 
   async getGame(gameId: string) {
-    const game = await fetch(`api/game/${gameId}`);
+    const response = await fetch(`/api/game/${gameId}`);
+    const game = await response.json();
     return game;
   }
 
