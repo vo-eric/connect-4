@@ -13,16 +13,18 @@ const router = createBrowserRouter([
   {
     path: '/',
     Component: App,
-  },
-  {
-    path: '/games',
-    Component: GamesList,
-    loader: async () => {
-      const finishedGames = await api.getFinishedGames();
-      const unfinishedGames = await api.getUnfinishedGames();
+    children: [
+      {
+        path: 'games',
+        Component: GamesList,
+        loader: async () => {
+          const finishedGames = await api.getFinishedGames();
+          const unfinishedGames = await api.getUnfinishedGames();
 
-      return { finishedGames, unfinishedGames };
-    },
+          return { finishedGames, unfinishedGames };
+        },
+      },
+    ],
   },
   {
     path: '/games/:gameId',
@@ -36,18 +38,6 @@ const router = createBrowserRouter([
     },
     Component: GameView,
   },
-  /*
-
-  {
-    path: "/teams/:teamId",
-    loader: async ({ params }) => {
-      let team = await fetchTeam(params.teamId);
-      return { name: team.name };
-    },
-    Component: Team,
-  },
-
-  */
 ]);
 
 createRoot(document.getElementById('root')!).render(
