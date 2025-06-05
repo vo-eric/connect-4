@@ -17,6 +17,12 @@ const router = createBrowserRouter([
   {
     path: '/games',
     Component: GamesList,
+    loader: async () => {
+      const finishedGames = await api.getFinishedGames();
+      const unfinishedGames = await api.getUnfinishedGames();
+
+      return { finishedGames, unfinishedGames };
+    },
   },
   {
     path: '/games/:gameId',
@@ -26,7 +32,6 @@ const router = createBrowserRouter([
       }
 
       const game = await api.getGame(params.gameId);
-      console.log('fetched game', game);
       return { game };
     },
     Component: GameView,
