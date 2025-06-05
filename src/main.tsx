@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import GameView from './GameView.tsx';
+import GamesList from './GamesList.tsx';
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import { ConnectFourClientAPI } from '../api/connectFour';
 
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: '/',
     Component: App,
+  },
+  {
+    path: '/games',
+    Component: GamesList,
   },
   {
     path: '/games/:gameId',
