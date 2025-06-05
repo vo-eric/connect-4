@@ -120,7 +120,13 @@ export default function GameView() {
 
   return (
     <>
-      <div className='flex flex-col gap-8 text-center'>
+      <a
+        href='/games'
+        className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
+      >
+        Back to games
+      </a>
+      <div className='flex flex-col gap-8 text-center items-center m-auto'>
         {renderGameMessage(gameState)}
         <div
           className={clsx('flex-col gap-4 bg-blue-800 p-2 rounded-lg ', {

@@ -8,20 +8,37 @@ export default function GamesList() {
   }>();
 
   return (
-    <div className='finished games'>
-      <p>ongoing games</p>
-      {unfinishedGames.map((game) => {
-        return <p>{game.id}</p>;
-      })}
-
-      <p>finished games</p>
-      {finishedGames.map((game) => {
-        return (
-          <p>
-            {game.id} winner: {game.winningPlayer}
-          </p>
-        );
-      })}
+    <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-3 max-h-[400px] overflow-auto'>
+        <h3 className='text-xl'>Ongoing games</h3>
+        <div className='flex flex-col gap-2'>
+          {unfinishedGames.map((game) => {
+            return (
+              <a
+                className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
+                href={`/games/${game.id}`}
+              >
+                {game.id}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+      <div className='flex flex-col gap-3 max-h-[400px] overflow-auto'>
+        <h3 className='text-xl'>Finished games</h3>
+        <div className='flex flex-col gap-2'>
+          {finishedGames.map((game) => {
+            return (
+              <a
+                className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
+                href={`/games/${game.id}`}
+              >
+                {game.id}
+              </a>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
