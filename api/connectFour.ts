@@ -7,7 +7,6 @@ export interface ConnectFourAPIInterface {
   getUnfinishedGames: () => Promise<Game[]>;
   getFinishedGames: () => Promise<Game[]>;
 }
-
 export class ConnectFourAPI implements ConnectFourAPIInterface {
   private matches: Map<string, Game> = new Map();
 
@@ -86,18 +85,16 @@ export class ConnectFourClientAPI implements ConnectFourAPIInterface {
     const newGameState = await response.json();
     return newGameState;
   }
-  // TODO: try using query params
+
   async getFinishedGames() {
-    const response = await fetch(`/api/games/finished`);
+    const response = await fetch(`/api/games?finished=true`);
     const games = await response.json();
     return games;
   }
 
   async getUnfinishedGames() {
-    const response = await fetch(`/api/games/unfinished`);
+    const response = await fetch(`/api/games?finished=false`);
     const games = await response.json();
     return games;
   }
-
-  //END TODO
 }

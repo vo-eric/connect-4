@@ -57,6 +57,7 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
       .select()
       .from(gamesTable)
       .where(isNull(gamesTable.winningPlayer));
+
     return games;
   }
 
@@ -65,6 +66,7 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
       .select()
       .from(gamesTable)
       .where(isNotNull(gamesTable.winningPlayer));
+
     return games;
   }
 }
