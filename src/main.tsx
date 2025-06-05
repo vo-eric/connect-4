@@ -24,19 +24,19 @@ const router = createBrowserRouter([
           return { finishedGames, unfinishedGames };
         },
       },
-    ],
-  },
-  {
-    path: '/games/:gameId',
-    loader: async ({ params }) => {
-      if (!params.gameId) {
-        throw new Error('Game ID is required.');
-      }
+      {
+        path: '/games/:gameId',
+        loader: async ({ params }) => {
+          if (!params.gameId) {
+            throw new Error('Game ID is required.');
+          }
 
-      const game = await api.getGame(params.gameId);
-      return { game };
-    },
-    Component: GameView,
+          const game = await api.getGame(params.gameId);
+          return { game };
+        },
+        Component: GameView,
+      },
+    ],
   },
 ]);
 

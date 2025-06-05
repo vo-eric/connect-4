@@ -16,7 +16,6 @@ export default function GamesList() {
 
       <p>finished games</p>
       {finishedGames.map((game) => {
-        console.log(game.winningPlayer);
         return (
           <p>
             {game.id} winner: {game.winningPlayer}
