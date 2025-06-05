@@ -1,0 +1,1 @@
+ALTER TABLE "game" ALTER COLUMN "winning_player" SET DATA TYPE "public"."winner" USING "winning_player"::text::"public"."winner";

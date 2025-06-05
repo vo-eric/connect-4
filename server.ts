@@ -1,10 +1,10 @@
 import express from 'express';
 import ViteExpress from 'vite-express';
-import { ConnectFourAPI } from './api/connectFour';
+import { ConnectFourDbAPI } from './src/db/db';
 
 const app = express();
 app.use(express.json());
-const connectFour = new ConnectFourAPI();
+const connectFour = new ConnectFourDbAPI();
 
 app.get('/api/game/:id', async (req, res) => {
   const game = await connectFour.getGame(req.params.id);
