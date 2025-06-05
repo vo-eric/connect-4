@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
@@ -6,6 +6,8 @@ import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
 import { ConnectFourClientAPI } from '../api/connectFour';
 import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
+import { io } from 'socket.io-client';
+import { PLAYER_CONNECTED, PLAYER_MOVED } from '../socketEvents';
 
 const api = new ConnectFourClientAPI();
 
@@ -52,6 +54,32 @@ export default function GameView() {
         </button>
   */
 
+  useEffect(() => {
+    const handleConnection = () => {
+      socket.emit(PLAYER_CONNECTED, gameState.id);
+    };
+
+    const handleMove = (game: Game) => {
+      setGameState(game);
+    };
+
+    const socket = io('http://localhost:3000');
+    socket.on('connect', handleConnection);
+
+    //TODO: find a use for this - maybe to render users in the lobby?
+    // socket.on(PLAYER_JOINED, (userId: string) => {
+    //   console.log(`user ${userId} joined`);
+    // });
+
+    socket.on(PLAYER_MOVED, handleMove);
+
+    //clean up existing sockets if dependencies change
+    return () => {
+      socket.off('connect', handleConnection);
+      socket.off(PLAYER_MOVED, handleMove);
+    };
+  }, [gameState.id]);
+
   const handleClick = async (column: number) => {
     if (!gameState) {
       return;
@@ -62,7 +90,7 @@ export default function GameView() {
     if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
-    setGameState(updatedGame);
+    // setGameState(updatedGame);
   };
 
   const renderFinishedState = () => {
