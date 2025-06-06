@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "docker:build": "docker build -t connect-four-server .",
+    "docker:run": "docker run -p 3000:3000 connect-four-server"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.8",
