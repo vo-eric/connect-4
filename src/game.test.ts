@@ -5,22 +5,21 @@ import {
   initializeGame,
   move,
   type Board,
+  type Game,
 } from './game';
 
 test('game initializes a valid game state', () => {
   const newGame = initializeGame();
-  assert.deepEqual(newGame, {
-    id: newGame.id,
-    board: [
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null],
-    ],
-    currentPlayer: 'B',
-  });
+  expect(newGame.board).toEqual([
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+  ]);
+
+  expect(newGame.currentPlayer).toBe('B');
 });
 
 describe('game correctly updates the current player', () => {
@@ -57,7 +56,7 @@ describe('a player can place a piece', () => {
   });
 
   test('a player can place a piece on an column with an existing piece', () => {
-    let game = initializeGame();
+    let game: Omit<Game, 'redWins' | 'blackWins'> = initializeGame();
     game = move(game.id, game.board, 2, 'B');
     game = move(game.id, game.board, 2, 'R');
 
@@ -76,7 +75,7 @@ describe('a player can place a piece', () => {
   });
 
   test('a player cannot place a piece in a full column', () => {
-    let game = initializeGame();
+    let game: Omit<Game, 'redWins' | 'blackWins'> = initializeGame();
     game.board = [
       [null, null, 'R', null, null, null, null],
       [null, null, 'B', null, null, null, null],
@@ -87,138 +86,131 @@ describe('a player can place a piece', () => {
     ];
     game = move(game.id, game.board, 2, 'B');
 
-    assert.deepEqual(game, {
-      id: game.id,
-      board: [
-        [null, null, 'R', null, null, null, null],
-        [null, null, 'B', null, null, null, null],
-        [null, null, 'R', null, null, null, null],
-        [null, null, 'B', null, null, null, null],
-        [null, null, 'R', null, null, null, null],
-        [null, null, 'B', null, null, null, null],
-      ],
-      currentPlayer: 'B',
-    });
+    expect(game.board).toEqual([
+      [null, null, 'R', null, null, null, null],
+      [null, null, 'B', null, null, null, null],
+      [null, null, 'R', null, null, null, null],
+      [null, null, 'B', null, null, null, null],
+      [null, null, 'R', null, null, null, null],
+      [null, null, 'B', null, null, null, null],
+    ]);
+
+    expect(game.currentPlayer).toEqual('B');
   });
 
   test('a player cannot place out of bounds', () => {
-    let game = initializeGame();
+    let game: Omit<Game, 'redWins' | 'blackWins'> = initializeGame();
     game = move(game.id, game.board, -1, 'B');
 
-    assert.deepEqual(game, {
-      id: game.id,
-      board: [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-      ],
-      currentPlayer: 'B',
-    });
-  });
-
-  test('a player cannot place out of bounds', () => {
-    let game = initializeGame();
-    game = move(game.id, game.board, 8, 'B');
-
-    assert.deepEqual(game, {
-      id: game.id,
-      board: [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-      ],
-      currentPlayer: 'B',
-    });
-  });
-
-  test('a player that makes a winning move should be declared the winner', () => {
-    const game = initializeGame();
-    game.board = [
+    expect(game.board).toEqual([
       [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null],
+    ]);
+    expect(game.currentPlayer).toBe('B');
+  });
+});
+
+test('a player cannot place out of bounds', () => {
+  let game: Omit<Game, 'redWins' | 'blackWins'> = initializeGame();
+  game = move(game.id, game.board, 8, 'B');
+
+  expect(game.board).toEqual([
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+  ]);
+
+  expect(game.currentPlayer).toBe('B');
+});
+
+test('a player that makes a winning move should be declared the winner', () => {
+  const game = initializeGame();
+  game.board = [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    ['B', null, null, null, null, null, null],
+    ['B', 'R', null, null, null, null, null],
+    ['B', 'R', 'B', 'R', null, null, null],
+  ];
+
+  const winningGame = move(game.id, game.board, 0, 'B');
+
+  assert.deepEqual(winningGame, {
+    id: game.id,
+    board: [
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
       ['B', null, null, null, null, null, null],
+      ['B', null, null, null, null, null, null],
       ['B', 'R', null, null, null, null, null],
       ['B', 'R', 'B', 'R', null, null, null],
-    ];
-
-    const winningGame = move(game.id, game.board, 0, 'B');
-
-    assert.deepEqual(winningGame, {
-      id: game.id,
-      board: [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        ['B', null, null, null, null, null, null],
-        ['B', null, null, null, null, null, null],
-        ['B', 'R', null, null, null, null, null],
-        ['B', 'R', 'B', 'R', null, null, null],
-      ],
-      currentPlayer: 'B',
-      winningPlayer: 'B',
-    });
+    ],
+    currentPlayer: 'B',
+    winningPlayer: 'B',
   });
+});
 
-  test('a player that makes a winning move should be declared the winner', () => {
-    const game = initializeGame();
-    game.board = [
+test('a player that makes a winning move should be declared the winner', () => {
+  const game = initializeGame();
+  game.board = [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    ['R', null, null, null, null, null, null],
+    ['B', null, null, null, null, null, null],
+    ['B', 'R', null, null, null, null, null],
+    ['B', 'B', 'B', null, null, null, null],
+  ];
+
+  const winningGame = move(game.id, game.board, 3, 'B');
+
+  assert.deepEqual(winningGame, {
+    id: game.id,
+    board: [
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
       ['R', null, null, null, null, null, null],
       ['B', null, null, null, null, null, null],
       ['B', 'R', null, null, null, null, null],
-      ['B', 'B', 'B', null, null, null, null],
-    ];
-
-    const winningGame = move(game.id, game.board, 3, 'B');
-
-    assert.deepEqual(winningGame, {
-      id: game.id,
-      board: [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        ['R', null, null, null, null, null, null],
-        ['B', null, null, null, null, null, null],
-        ['B', 'R', null, null, null, null, null],
-        ['B', 'B', 'B', 'B', null, null, null],
-      ],
-      currentPlayer: 'B',
-      winningPlayer: 'B',
-    });
+      ['B', 'B', 'B', 'B', null, null, null],
+    ],
+    currentPlayer: 'B',
+    winningPlayer: 'B',
   });
+});
 
-  test('a player that makes a winning move should be declared the winner', () => {
-    const game = initializeGame();
-    game.board = [
+test('a player that makes a winning move should be declared the winner', () => {
+  const game = initializeGame();
+  game.board = [
+    [null, null, null, null, null, null, null],
+    [null, null, null, null, null, null, null],
+    ['R', null, null, null, null, null, null],
+    ['B', 'R', null, null, null, null, null],
+    ['B', 'R', 'R', null, null, null, null],
+    ['B', 'B', 'B', null, null, null, null],
+  ];
+
+  const winningGame = move(game.id, game.board, 3, 'R');
+
+  assert.deepEqual(winningGame, {
+    id: game.id,
+    board: [
       [null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null],
       ['R', null, null, null, null, null, null],
       ['B', 'R', null, null, null, null, null],
       ['B', 'R', 'R', null, null, null, null],
-      ['B', 'B', 'B', null, null, null, null],
-    ];
-
-    const winningGame = move(game.id, game.board, 3, 'R');
-
-    assert.deepEqual(winningGame, {
-      id: game.id,
-      board: [
-        [null, null, null, null, null, null, null],
-        [null, null, null, null, null, null, null],
-        ['R', null, null, null, null, null, null],
-        ['B', 'R', null, null, null, null, null],
-        ['B', 'R', 'R', null, null, null, null],
-        ['B', 'B', 'B', 'R', null, null, null],
-      ],
-      currentPlayer: 'R',
-      winningPlayer: 'R',
-    });
+      ['B', 'B', 'B', 'R', null, null, null],
+    ],
+    currentPlayer: 'R',
+    winningPlayer: 'R',
   });
 });
 

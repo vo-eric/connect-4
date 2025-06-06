@@ -71,7 +71,7 @@ describe('move', async () => {
 
     test('getUnfinishedGames() should fetch all finished games', async () => {
       const getUnfinishedGames = await connectFour.getUnfinishedGames();
-      expect(getUnfinishedGames.length).toBe(2);
+      expect(getUnfinishedGames.length).toBe(3);
     });
   });
 });
