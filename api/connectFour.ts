@@ -7,6 +7,7 @@ export interface ConnectFourAPIInterface {
   getUnfinishedGames: () => Promise<Game[]>;
   getFinishedGames: () => Promise<Game[]>;
   updateScore: (gameId: string) => Promise<Game>;
+  restartGame: (gameId: string) => Promise<Game>;
 }
 export class ConnectFourAPI implements ConnectFourAPIInterface {
   private matches: Map<string, Game> = new Map();
@@ -75,6 +76,14 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
 
     return game;
   }
+
+  async restartGame(gameId: string): Promise<Game> {
+    const game = initializeGame();
+    const newGame = { ...game, id: gameId };
+
+    this.matches.set(gameId, newGame);
+    return newGame;
+  }
 }
 
 const BASE_URL: string = 'http://localhost:3000';
@@ -138,5 +147,11 @@ export class ConnectFourClientAPI implements ConnectFourAPIInterface {
 
     const updatedGame = await response.json();
     return updatedGame;
+  }
+
+  async restartGame(gameId: string): Promise<Game> {
+    const response = await fetch(`${BASE_URL}/api/game/${gameId}/restart`);
+    const newGame = await response.json();
+    return newGame;
   }
 }

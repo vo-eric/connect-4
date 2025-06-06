@@ -94,4 +94,31 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
 
     return game;
   }
+
+  async restartGame(gameId: string): Promise<Game> {
+    const existingGame = await this.getGame(gameId);
+    const newGame = await initializeGame();
+
+    const game = {
+      id: gameId,
+      board: newGame.board,
+      winningPlayer: newGame.winningPlayer,
+      currentPlayer: newGame.currentPlayer,
+      redWins: existingGame.redWins,
+      blackWins: existingGame.blackWins,
+    };
+
+    await this.db
+      .update(gamesTable)
+      .set({
+        board: newGame.board,
+        winningPlayer: null,
+        currentPlayer: newGame.currentPlayer,
+        redWins: existingGame.redWins,
+        blackWins: existingGame.blackWins,
+      })
+      .where(eq(gamesTable.id, gameId));
+
+    return game;
+  }
 }

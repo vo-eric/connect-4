@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
@@ -6,8 +6,14 @@ import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
 import { ConnectFourClientAPI } from '../api/connectFour';
 import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
-import { io } from 'socket.io-client';
-import { PLAYER_CONNECTED, PLAYER_JOINED, PLAYER_MOVED } from '../socketEvents';
+import { io, Socket } from 'socket.io-client';
+import {
+  PLAYER_CONNECTED,
+  PLAYER_JOINED,
+  PLAYER_MOVED,
+  REQUEST_GAME_RESTART,
+  RESTART_GAME,
+} from '../socketEvents';
 
 const api = new ConnectFourClientAPI();
 
@@ -17,6 +23,7 @@ export default function GameView() {
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
   const [playersInGame, setPlayersInGame] = useState<string[]>([]);
+  const socketRef = useRef<Socket | undefined>(undefined);
 
   /*  
   
@@ -51,7 +58,12 @@ export default function GameView() {
       setGameState(game);
     };
 
+    const handleGameRestart = (game: Game) => {
+      setGameState(game);
+    };
+
     const socket = io('http://localhost:3000');
+    socketRef.current = socket;
     socket.on('connect', handleConnection);
 
     //TODO: find a use for this - maybe to render users in the lobby?
@@ -60,11 +72,13 @@ export default function GameView() {
     });
 
     socket.on(PLAYER_MOVED, handleMove);
+    socket.on(RESTART_GAME, handleGameRestart);
 
     //clean up existing sockets if dependencies change
     return () => {
       socket.off('connect', handleConnection);
       socket.off(PLAYER_MOVED, handleMove);
+      socket.off(RESTART_GAME, handleGameRestart);
     };
   }, [gameState.id]);
 
@@ -84,6 +98,14 @@ export default function GameView() {
     } else if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
+  };
+
+  const requestRestart = async (gameId: string) => {
+    const newGame = await api.restartGame(gameId);
+    if (socketRef.current) {
+      socketRef.current.emit(REQUEST_GAME_RESTART, gameId);
+    }
+    setGameState(newGame);
   };
 
   const renderFinishedState = () => {
@@ -200,6 +222,12 @@ export default function GameView() {
                 <p>{player}</p>
               ))}
             </div>
+            <button
+              className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300 mt-auto'
+              onClick={() => requestRestart(gameState.id)}
+            >
+              {gameState.winningPlayer ? 'New Game' : 'Restart'}
+            </button>
           </div>
           {gameState.winningPlayer && (
             <div className='winner min-h-10 absolute top-0 left-0'>

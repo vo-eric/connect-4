@@ -3,7 +3,13 @@ import express from 'express';
 import { ConnectFourDbAPI } from './src/db/db';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { PLAYER_CONNECTED, PLAYER_JOINED, PLAYER_MOVED } from './socketEvents';
+import {
+  PLAYER_CONNECTED,
+  PLAYER_JOINED,
+  PLAYER_MOVED,
+  REQUEST_GAME_RESTART,
+  RESTART_GAME,
+} from './socketEvents';
 
 const app = express();
 app.use(express.json());
@@ -47,6 +53,11 @@ app.post('/api/game/:id/updateScore', async (req, res) => {
   return res.json(updatedGame);
 });
 
+app.get('/api/game/:id/restart', async (req, res) => {
+  const game = await connectFour.restartGame(req.params.id);
+  return res.json(game);
+});
+
 const PORT = parseInt(process.env.PORT || '3000');
 
 const server = app.listen(PORT, () =>
@@ -77,7 +88,15 @@ io.on('connection', (socket) => {
     io.to(roomId).emit(PLAYER_JOINED, ids);
   };
 
+  const handleRestart = async (gameId: string) => {
+    const newGame = await connectFour.restartGame(gameId);
+    const roomId = getRoomId(newGame);
+    io.to(roomId).emit(RESTART_GAME, newGame);
+  };
+
   socket.on(PLAYER_CONNECTED, handleConnection);
+
+  socket.on(REQUEST_GAME_RESTART, handleRestart);
 
   socket.on('disconnect', () => {
     socket.off(PLAYER_CONNECTED, handleConnection);
