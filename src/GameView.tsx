@@ -75,7 +75,13 @@ export default function GameView() {
 
     const updatedGame = await api.move(gameState.id, column);
 
-    if (updatedGame.winningPlayer === 'tie') {
+    //Refactor this into its own function
+    if (
+      updatedGame.winningPlayer === 'B' ||
+      updatedGame.winningPlayer === 'R'
+    ) {
+      setGameState(await api.updateScore(gameState.id));
+    } else if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
   };
@@ -135,7 +141,12 @@ export default function GameView() {
 
   return (
     <>
-      <div></div>
+      <div>
+        <p>SCORES</p>
+
+        <p>red score: {gameState.redWins}</p>
+        <p>black score: {gameState.blackWins}</p>
+      </div>
       <a
         href='/games'
         className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
