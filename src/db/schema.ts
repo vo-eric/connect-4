@@ -1,4 +1,4 @@
-import { jsonb, pgEnum, pgTable, varchar } from 'drizzle-orm/pg-core';
+import { integer, jsonb, pgEnum, pgTable, varchar } from 'drizzle-orm/pg-core';
 import type { Board } from '../game';
 
 export const playerEnum = pgEnum('player', ['B', 'R']);
@@ -9,4 +9,6 @@ export const gamesTable = pgTable('game', {
   board: jsonb().$type<Board>().notNull(),
   currentPlayer: playerEnum('current_player').notNull(),
   winningPlayer: winnerEnum('winning_player'),
+  blackWins: integer().notNull().default(0),
+  redWins: integer().notNull().default(0),
 });

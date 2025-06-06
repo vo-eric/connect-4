@@ -22,6 +22,13 @@
       "when": 1749074614901,
       "tag": "0002_illegal_galactus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1749224064121,
+      "tag": "0003_spooky_deathbird",
+      "breakpoints": true
     }
   ]
 }

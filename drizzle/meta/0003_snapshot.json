@@ -1,0 +1,90 @@
+{
+  "id": "023ed6e9-bfdd-4729-b15a-2ad26b9b6e99",
+  "prevId": "e770b221-7de1-438c-9a51-bd232212c06a",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.game": {
+      "name": "game",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "board": {
+          "name": "board",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "current_player": {
+          "name": "current_player",
+          "type": "player",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "winning_player": {
+          "name": "winning_player",
+          "type": "winner",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blackWins": {
+          "name": "blackWins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "redWins": {
+          "name": "redWins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.player": {
+      "name": "player",
+      "schema": "public",
+      "values": [
+        "B",
+        "R"
+      ]
+    },
+    "public.winner": {
+      "name": "winner",
+      "schema": "public",
+      "values": [
+        "R",
+        "B",
+        "tie"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
