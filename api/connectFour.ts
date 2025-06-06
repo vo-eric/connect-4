@@ -53,9 +53,10 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
   }
 }
 
+const BASE_URL: string = 'http://localhost:3000';
 export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   async createGame() {
-    const response = await fetch('/api/game', {
+    const response = await fetch(`${BASE_URL}/api/game`, {
       method: 'POST',
     });
 
@@ -67,13 +68,13 @@ export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   }
 
   async getGame(gameId: string) {
-    const response = await fetch(`/api/game/${gameId}`);
+    const response = await fetch(`${BASE_URL}/api/game/${gameId}`);
     const game = await response.json();
     return game;
   }
 
   async move(gameId: string, column: number) {
-    const response = await fetch(`/api/game/${gameId}/move`, {
+    const response = await fetch(`${BASE_URL}/api/game/${gameId}/move`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,13 +88,13 @@ export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   }
 
   async getFinishedGames() {
-    const response = await fetch(`/api/games?finished=true`);
+    const response = await fetch(`${BASE_URL}/api/games?finished=true`);
     const games = await response.json();
     return games;
   }
 
   async getUnfinishedGames() {
-    const response = await fetch(`/api/games?finished=false`);
+    const response = await fetch(`${BASE_URL}/api/games?finished=false`);
     const games = await response.json();
     return games;
   }
