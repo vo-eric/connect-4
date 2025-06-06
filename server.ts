@@ -42,6 +42,11 @@ app.post('/api/game/:id/move', async (req, res) => {
   return res.json(updatedGame);
 });
 
+app.post('/api/game/:id/updateScore', async (req, res) => {
+  const updatedGame = await connectFour.updateScore(req.params.id);
+  return res.json(updatedGame);
+});
+
 const PORT = parseInt(process.env.PORT || '3000');
 
 const server = app.listen(PORT, () =>
