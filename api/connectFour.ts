@@ -7,6 +7,7 @@ export interface ConnectFourAPIInterface {
   getUnfinishedGames: () => Promise<Game[]>;
   getFinishedGames: () => Promise<Game[]>;
   updateScore: (gameId: string) => Promise<Game>;
+  restartGame: (gameId: string) => Promise<Game>;
 }
 export class ConnectFourAPI implements ConnectFourAPIInterface {
   private matches: Map<string, Game> = new Map();
