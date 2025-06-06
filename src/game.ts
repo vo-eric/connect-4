@@ -7,6 +7,8 @@ export type Game = {
   board: Board;
   currentPlayer: Player;
   winningPlayer?: Winner;
+  blackWins: number;
+  redWins: number;
 };
 
 export const initializeGame = (): Game => {
@@ -16,6 +18,8 @@ export const initializeGame = (): Game => {
     id: crypto.randomUUID(),
     board: newBoard,
     currentPlayer: 'B',
+    blackWins: 0,
+    redWins: 0,
   };
 };
 
@@ -28,7 +32,7 @@ export const move = (
   board: Board,
   column: number,
   currentPlayer: Player
-): Game => {
+): Omit<Game, 'blackWins' | 'redWins'> => {
   const newBoard = structuredClone(board);
 
   if (
