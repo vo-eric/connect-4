@@ -86,7 +86,7 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
   }
 }
 
-const BASE_URL: string = process.env.SERVER_URL || 'localhost:3000';
+const BASE_URL: string = 'https://connect-4-2.onrender.com';
 export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   async createGame() {
     const response = await fetch(`${BASE_URL}/api/game`, {
