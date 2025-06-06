@@ -3,13 +3,11 @@ import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
 import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
-import { ConnectFourClientAPI } from '../api/connectFour';
+// import { ConnectFourClientAPI } from '../api/connectFour';
 import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
 import { io } from 'socket.io-client';
 import { PLAYER_CONNECTED, PLAYER_MOVED } from '../socketEvents';
-
-const api = new ConnectFourClientAPI();
 
 export default function GameView() {
   const { game: fetchedGame } = useLoaderData<{ game: Game }>();
@@ -17,29 +15,7 @@ export default function GameView() {
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
 
-  /*
-  NOTE: USE THIS FOR NEW GAME CREATION
-  
-  const initializeGame = async () => {
-    const game = await api.getGame(gameId);
-    setGameState(game);
-  };
-
-  const handleNewGameClick = () => {
-    initializeGame();
-  };
-
-  if (!gameState) {
-    return (
-      <button
-        className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
-        onClick={() => initializeGame()}
-      >
-        Start a new game
-      </button>
-    );
-  }
-
+  /*  
 
   NOTE: potentially use this for rematches
     const handleNewGameClick = () => {
