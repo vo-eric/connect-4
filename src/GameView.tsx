@@ -14,6 +14,7 @@ import {
   REQUEST_GAME_RESTART,
   RESTART_GAME,
 } from '../socketEvents';
+import Scoreboard from './Scoreboard';
 
 const api = new ConnectFourClientAPI();
 
@@ -24,30 +25,6 @@ export default function GameView() {
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
   const [playersInGame, setPlayersInGame] = useState<string[]>([]);
   const socketRef = useRef<Socket | undefined>(undefined);
-
-  /*  
-  
-  How to handle rematches
-  Clear the board, update the existing row in the DB and force "B" to start
-    requires refactoring makeMove
-
-  Creates a new game and row in the db
-    emits an event into the socket
-    forces everyone in the socket/room to navigate to the new room
-
-
-  NOTE: potentially use this for rematches
-    const handleNewGameClick = () => {
-      initializeGame();
-    };
-
-    <button
-          className='transition duration-300 rounded-lg bg-white py-2 px-4 text-bg-blue hover:bg-bg-blue hover:text-white hover:border-1 hover:border-white cursor-pointer border-1 border-bg-blue font-semibold'
-          onClick={handleNewGameClick}
-        >
-          {gameState.winningPlayer ? 'New Game' : 'Reset Game'}
-        </button>
-  */
 
   useEffect(() => {
     const handleConnection = () => {
@@ -66,7 +43,6 @@ export default function GameView() {
     socketRef.current = socket;
     socket.on('connect', handleConnection);
 
-    //TODO: find a use for this - maybe to render users in the lobby?
     socket.on(PLAYER_JOINED, (userIds: string[]) => {
       setPlayersInGame(userIds);
     });
@@ -163,12 +139,6 @@ export default function GameView() {
 
   return (
     <>
-      <div>
-        <p>SCORES</p>
-
-        <p>red score: {gameState.redWins}</p>
-        <p>black score: {gameState.blackWins}</p>
-      </div>
       <a
         href='/games'
         className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
@@ -176,6 +146,7 @@ export default function GameView() {
         Back to games
       </a>
       <div className='flex flex-col gap-8 text-center items-center m-auto'>
+        <Scoreboard gameState={gameState} />
         {renderGameMessage(gameState)}
         <div className='flex gap-6 text-start'>
           <div
