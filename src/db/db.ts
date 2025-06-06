@@ -52,21 +52,31 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
   }
 
   async getUnfinishedGames(): Promise<Game[]> {
-    const games = await this.db
-      .select()
-      .from(gamesTable)
-      .where(isNull(gamesTable.winningPlayer));
+    try {
+      const games = await this.db
+        .select()
+        .from(gamesTable)
+        .where(isNull(gamesTable.winningPlayer));
 
-    return games;
+      return games;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async getFinishedGames(): Promise<Game[]> {
-    const games = await this.db
-      .select()
-      .from(gamesTable)
-      .where(isNotNull(gamesTable.winningPlayer));
+    try {
+      const games = await this.db
+        .select()
+        .from(gamesTable)
+        .where(isNotNull(gamesTable.winningPlayer));
 
-    return games;
+      return games;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async updateScore(gameId: string): Promise<Game> {

@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.SERVER_URL,
+    origin: '*',
     methods: ['GET', 'POST'],
   })
 );
@@ -68,7 +68,7 @@ const getRoomId = (game) => `game-${game.id}`;
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: '*',
     methods: ['GET', 'POST'],
   },
 });
