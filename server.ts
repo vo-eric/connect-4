@@ -67,7 +67,9 @@ io.on('connection', (socket) => {
 
     const roomId = getRoomId(game);
     socket.join(roomId);
-    io.to(roomId).emit(PLAYER_JOINED, socket.id);
+    const sockets = await io.in(roomId).fetchSockets();
+    const ids = sockets.map((socket) => socket.id);
+    io.to(roomId).emit(PLAYER_JOINED, ids);
   };
 
   socket.on(PLAYER_CONNECTED, handleConnection);

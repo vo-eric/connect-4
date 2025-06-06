@@ -3,19 +3,31 @@ import { type Game } from './game';
 import clsx from 'clsx';
 import useSound from 'use-sound';
 import pirHorn from '../public/the-price-is-right-losing-horn.mp3';
-// import { ConnectFourClientAPI } from '../api/connectFour';
+import { ConnectFourClientAPI } from '../api/connectFour';
 import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
 import { io } from 'socket.io-client';
-import { PLAYER_CONNECTED, PLAYER_MOVED } from '../socketEvents';
+import { PLAYER_CONNECTED, PLAYER_JOINED, PLAYER_MOVED } from '../socketEvents';
+
+const api = new ConnectFourClientAPI();
 
 export default function GameView() {
   const { game: fetchedGame } = useLoaderData<{ game: Game }>();
   const [gameState, setGameState] = useState<Game>(fetchedGame);
   const [hoveredColumn, setHoveredColumn] = useState<number | null>(null);
   const [playSound] = useSound(pirHorn, { volume: 0.7 });
+  const [playersInGame, setPlayersInGame] = useState<string[]>([]);
 
   /*  
+  
+  How to handle rematches
+  Clear the board, update the existing row in the DB and force "B" to start
+    requires refactoring makeMove
+
+  Creates a new game and row in the db
+    emits an event into the socket
+    forces everyone in the socket/room to navigate to the new room
+
 
   NOTE: potentially use this for rematches
     const handleNewGameClick = () => {
@@ -43,9 +55,9 @@ export default function GameView() {
     socket.on('connect', handleConnection);
 
     //TODO: find a use for this - maybe to render users in the lobby?
-    // socket.on(PLAYER_JOINED, (userId: string) => {
-    //   console.log(`user ${userId} joined`);
-    // });
+    socket.on(PLAYER_JOINED, (userIds: string[]) => {
+      setPlayersInGame(userIds);
+    });
 
     socket.on(PLAYER_MOVED, handleMove);
 
@@ -66,7 +78,6 @@ export default function GameView() {
     if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
-    // setGameState(updatedGame);
   };
 
   const renderFinishedState = () => {
@@ -124,6 +135,7 @@ export default function GameView() {
 
   return (
     <>
+      <div></div>
       <a
         href='/games'
         className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300'
@@ -132,48 +144,58 @@ export default function GameView() {
       </a>
       <div className='flex flex-col gap-8 text-center items-center m-auto'>
         {renderGameMessage(gameState)}
-        <div
-          className={clsx('flex-col gap-4 bg-blue-800 p-2 rounded-lg ', {
-            'pointer-events-none': gameState.winningPlayer,
-          })}
-        >
-          {gameState.board.map((row, i) => {
-            return (
-              <div className='flex p-1 gap-2'>
-                {row.map((_, j) => {
-                  return (
-                    <div
-                      className={clsx(
-                        'rounded-full h-12 w-12 transition duration-300',
-                        {
-                          'bg-white':
-                            gameState.board[i][j] === null &&
-                            hoveredColumn !== j,
-                        },
-                        {
-                          'bg-gray-300':
-                            hoveredColumn === j &&
-                            gameState.board[i][j] === null,
-                        },
-                        { 'bg-black': gameState.board[i][j] === 'B' },
-                        { 'bg-red-900': gameState.board[i][j] === 'R' }
-                      )}
-                      onClick={() => handleClick(j)}
-                      onMouseEnter={() => setHoveredColumn(j)}
-                      onMouseLeave={() => setHoveredColumn(null)}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-
-        {gameState.winningPlayer && (
-          <div className='winner min-h-10 absolute top-0 left-0'>
-            {renderFinishedState()}
+        <div className='flex gap-6 text-start'>
+          <div
+            className={clsx('flex-col gap-4 bg-blue-800 p-2 rounded-lg ', {
+              'pointer-events-none': gameState.winningPlayer,
+            })}
+          >
+            {gameState.board.map((row, i) => {
+              return (
+                <div className='flex p-1 gap-2'>
+                  {row.map((_, j) => {
+                    return (
+                      <div
+                        className={clsx(
+                          'rounded-full h-12 w-12 transition duration-300',
+                          {
+                            'bg-white':
+                              gameState.board[i][j] === null &&
+                              hoveredColumn !== j,
+                          },
+                          {
+                            'bg-gray-300':
+                              hoveredColumn === j &&
+                              gameState.board[i][j] === null,
+                          },
+                          { 'bg-black': gameState.board[i][j] === 'B' },
+                          { 'bg-red-900': gameState.board[i][j] === 'R' }
+                        )}
+                        onClick={() => handleClick(j)}
+                        onMouseEnter={() => setHoveredColumn(j)}
+                        onMouseLeave={() => setHoveredColumn(null)}
+                      />
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
-        )}
+
+          <div className='flex flex-col gap-2'>
+            <p className='text-2xl font-bold'>Players in game:</p>
+            <div>
+              {playersInGame.map((player) => (
+                <p>{player}</p>
+              ))}
+            </div>
+          </div>
+          {gameState.winningPlayer && (
+            <div className='winner min-h-10 absolute top-0 left-0'>
+              {renderFinishedState()}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
