@@ -200,6 +200,9 @@ export default function GameView() {
                 <p>{player}</p>
               ))}
             </div>
+            <button className='p-2 rounded-lg border border-bg-blue text-bg-blue! hover:bg-bg-blue hover:text-white! cursor-pointer transition duration-300 mt-auto'>
+              {gameState.winningPlayer ? 'New Game' : 'Restart'}
+            </button>
           </div>
           {gameState.winningPlayer && (
             <div className='winner min-h-10 absolute top-0 left-0'>
