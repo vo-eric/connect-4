@@ -1,3 +1,0 @@
-export const PLAYER_CONNECTED = 'PLAYER_CONNECTED';
-export const PLAYER_JOINED = 'PLAYER_JOINED';
-export const PLAYER_MOVED = 'PLAYER_MOVED';
