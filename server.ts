@@ -48,11 +48,6 @@ app.post('/api/game/:id/move', async (req, res) => {
   return res.json(updatedGame);
 });
 
-app.post('/api/game/:id/updateScore', async (req, res) => {
-  const updatedGame = await connectFour.updateScore(req.params.id);
-  return res.json(updatedGame);
-});
-
 app.get('/api/game/:id/restart', async (req, res) => {
   const game = await connectFour.restartGame(req.params.id);
   return res.json(game);
