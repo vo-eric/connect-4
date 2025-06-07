@@ -6,7 +6,6 @@ export interface ConnectFourAPIInterface {
   getGame: (gameId: string) => Promise<Game>;
   getUnfinishedGames: () => Promise<Game[]>;
   getFinishedGames: () => Promise<Game[]>;
-  updateScore: (gameId: string) => Promise<Game>;
   restartGame: (gameId: string) => Promise<Game>;
 }
 export class ConnectFourAPI implements ConnectFourAPIInterface {
@@ -52,24 +51,6 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
     const allGames = Array.from(this.matches.values());
     const getUnfinishedGames = allGames.filter((game) => !game.winningPlayer);
     return getUnfinishedGames;
-  }
-
-  async updateScore(gameId: string): Promise<Game> {
-    const game = this.matches.get(gameId);
-
-    if (!game) {
-      throw new Error('Game not found');
-    }
-
-    const { winningPlayer } = game;
-
-    if (winningPlayer === 'R') {
-      game.redWins++;
-    } else if (winningPlayer === 'B') {
-      game.blackWins++;
-    }
-
-    return game;
   }
 
   async restartGame(gameId: string): Promise<Game> {
@@ -126,23 +107,6 @@ export class ConnectFourClientAPI implements ConnectFourAPIInterface {
     const response = await fetch(`${BASE_URL}/api/games?finished=false`);
     const games = await response.json();
     return games;
-  }
-
-  async updateScore(gameId: string): Promise<Game> {
-    const game = await this.getGame(gameId);
-
-    const response = await fetch(`${BASE_URL}/api/game/${gameId}/updateScore`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        winner: game.winningPlayer,
-      }),
-    });
-
-    const updatedGame = await response.json();
-    return updatedGame;
   }
 
   async restartGame(gameId: string): Promise<Game> {
