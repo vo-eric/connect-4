@@ -11,7 +11,7 @@ export default function Score({
   return (
     <div
       className={clsx(
-        'flex flex-col text-white p-4 rounded-lg text-2xl',
+        'flex flex-col text-white p-4 rounded-lg text-2xl w-[150px]',
         player === 'B' ? 'bg-black' : 'bg-red-900'
       )}
     >

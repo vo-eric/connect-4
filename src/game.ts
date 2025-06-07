@@ -27,53 +27,49 @@ export const determinePlayer = (currentPlayer: Player): Player => {
   return currentPlayer === 'B' ? 'R' : 'B';
 };
 
-export const move = (
-  id: string,
-  board: Board,
-  column: number,
-  currentPlayer: Player
-): Omit<Game, 'blackWins' | 'redWins'> => {
-  const newBoard = structuredClone(board);
+export const move = (game: Game, column: number): Game => {
+  const newBoard = structuredClone(game.board);
 
   if (
     column < 0 ||
     column >= newBoard[0].length ||
     newBoard[0][column] !== null
   ) {
-    return { id, board, currentPlayer };
+    return game;
   }
 
   for (let row = 0; row <= newBoard.length - 1; row++) {
     if (row === newBoard.length - 1 || newBoard[row + 1][column] !== null) {
-      newBoard[row][column] = currentPlayer;
+      newBoard[row][column] = game.currentPlayer;
       break;
     }
   }
 
-  const hasWinner = determineWinner(newBoard, currentPlayer);
+  const winner = determineWinner(newBoard, game.currentPlayer);
 
-  if (hasWinner) {
+  if (!game.winningPlayer && winner) {
+    const { blackWins, redWins } = getUpdatedScore(game, winner);
     return {
-      id,
+      ...game,
       board: newBoard,
-      currentPlayer,
-      winningPlayer: currentPlayer,
+      winningPlayer: game.currentPlayer,
+      blackWins,
+      redWins,
     };
   }
 
-  if (!hasWinner && newBoard.flat().every((cell) => cell !== null)) {
+  if (!winner && newBoard.flat().every((cell) => cell !== null)) {
     return {
-      id,
+      ...game,
       board: newBoard,
-      currentPlayer,
       winningPlayer: 'tie',
     };
   }
 
   return {
-    id,
+    ...game,
     board: newBoard,
-    currentPlayer: determinePlayer(currentPlayer),
+    currentPlayer: determinePlayer(game.currentPlayer),
   };
 };
 
@@ -121,4 +117,23 @@ export const determineWinner = (
   }
 
   return undefined;
+};
+
+export const getUpdatedScore = (
+  game: Game,
+  winner: Winner
+): { blackWins: number; redWins: number } => {
+  if (winner === 'B') {
+    return {
+      blackWins: game.blackWins + 1,
+      redWins: game.redWins,
+    };
+  } else if (winner === 'R') {
+    return {
+      blackWins: game.blackWins,
+      redWins: game.redWins + 1,
+    };
+  } else {
+    return { blackWins: game.blackWins, redWins: game.redWins };
+  }
 };

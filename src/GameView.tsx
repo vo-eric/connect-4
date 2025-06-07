@@ -32,6 +32,7 @@ export default function GameView() {
     };
 
     const handleMove = (game: Game) => {
+      console.log('OMG I MOVE');
       setGameState(game);
     };
 
@@ -52,9 +53,7 @@ export default function GameView() {
 
     //clean up existing sockets if dependencies change
     return () => {
-      socket.off('connect', handleConnection);
-      socket.off(PLAYER_MOVED, handleMove);
-      socket.off(RESTART_GAME, handleGameRestart);
+      socket.disconnect();
     };
   }, [gameState.id]);
 
@@ -65,15 +64,10 @@ export default function GameView() {
 
     const updatedGame = await api.move(gameState.id, column);
 
-    //Refactor this into its own function
-    if (
-      updatedGame.winningPlayer === 'B' ||
-      updatedGame.winningPlayer === 'R'
-    ) {
-      setGameState(await api.updateScore(gameState.id));
-    } else if (updatedGame.winningPlayer === 'tie') {
+    if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
+    setGameState(updatedGame);
   };
 
   const requestRestart = async (gameId: string) => {
@@ -156,10 +150,11 @@ export default function GameView() {
           >
             {gameState.board.map((row, i) => {
               return (
-                <div className='flex p-1 gap-2'>
+                <div key={i} className='flex p-1 gap-2'>
                   {row.map((_, j) => {
                     return (
                       <div
+                        key={`${i},${j}`}
                         className={clsx(
                           'rounded-full h-12 w-12 transition duration-300',
                           {
@@ -190,7 +185,7 @@ export default function GameView() {
             <p className='text-2xl font-bold'>Players in game:</p>
             <div>
               {playersInGame.map((player) => (
-                <p>{player}</p>
+                <p key={player}>{player}</p>
               ))}
             </div>
             <button
