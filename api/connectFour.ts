@@ -31,12 +31,7 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
   async move(gameId: string, column: number): Promise<Game> {
     const game = await this.getGame(gameId);
 
-    const updatedGame = makeMove(
-      game.id,
-      game.board,
-      column,
-      game.currentPlayer
-    );
+    const updatedGame = makeMove(game, column);
 
     this.matches.set(gameId, {
       ...updatedGame,
@@ -86,7 +81,8 @@ export class ConnectFourAPI implements ConnectFourAPIInterface {
   }
 }
 
-const BASE_URL: string = 'https://connect-4-2.onrender.com';
+const BASE_URL = 'http://localhost:3000';
+// const BASE_URL = 'https://connect-4-2.onrender.com';
 export class ConnectFourClientAPI implements ConnectFourAPIInterface {
   async createGame() {
     const response = await fetch(`${BASE_URL}/api/game`, {

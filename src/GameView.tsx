@@ -8,6 +8,7 @@ import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
 import { io, Socket } from 'socket.io-client';
 import {
+  GAME_WON,
   PLAYER_CONNECTED,
   PLAYER_JOINED,
   PLAYER_MOVED,
@@ -32,6 +33,7 @@ export default function GameView() {
     };
 
     const handleMove = (game: Game) => {
+      console.log('OMG I MOVE');
       setGameState(game);
     };
 
@@ -39,7 +41,8 @@ export default function GameView() {
       setGameState(game);
     };
 
-    const socket = io('https://connect-4-2.onrender.com');
+    const socket = io('http://localhost:3000');
+    // const socket = io('https://connect-4-2.onrender.com');
     socketRef.current = socket;
     socket.on('connect', handleConnection);
 
@@ -65,15 +68,10 @@ export default function GameView() {
 
     const updatedGame = await api.move(gameState.id, column);
 
-    //Refactor this into its own function
-    if (
-      updatedGame.winningPlayer === 'B' ||
-      updatedGame.winningPlayer === 'R'
-    ) {
-      setGameState(await api.updateScore(gameState.id));
-    } else if (updatedGame.winningPlayer === 'tie') {
+    if (updatedGame.winningPlayer === 'tie') {
       playSound();
     }
+    setGameState(updatedGame);
   };
 
   const requestRestart = async (gameId: string) => {

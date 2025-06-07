@@ -30,14 +30,12 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
   }
 
   async move(gameId: string, column: number): Promise<Game> {
-    const game = await this.db
+    const [game] = await this.db
       .select()
       .from(gamesTable)
       .where(eq(gamesTable.id, gameId));
 
-    const { id, board, currentPlayer, redWins, blackWins } = game[0];
-
-    const updatedGame = await move(id, board, column, currentPlayer);
+    const updatedGame = await move(game, column);
 
     await this.db
       .update(gamesTable)
@@ -48,7 +46,11 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
       })
       .where(eq(gamesTable.id, gameId));
 
-    return { ...updatedGame, redWins, blackWins };
+    return {
+      ...updatedGame,
+      blackWins: updatedGame.blackWins,
+      redWins: updatedGame.redWins,
+    };
   }
 
   async getUnfinishedGames(): Promise<Game[]> {
