@@ -94,7 +94,6 @@ io.on('connection', (socket) => {
   socket.on(REQUEST_GAME_RESTART, handleRestart);
 
   socket.on('disconnect', () => {
-    socket.off(PLAYER_CONNECTED, handleConnection);
-    socket.off(REQUEST_GAME_RESTART, handleRestart);
+    socket.disconnect();
   });
 });
