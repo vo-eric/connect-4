@@ -40,8 +40,7 @@ export default function GameView() {
       setGameState(game);
     };
 
-    const socket = io('http://localhost:3000');
-    // const socket = io('https://connect-4-2.onrender.com');
+    const socket = io('https://connect-4-2.onrender.com');
     socketRef.current = socket;
     socket.on('connect', handleConnection);
 
