@@ -53,9 +53,7 @@ export default function GameView() {
 
     //clean up existing sockets if dependencies change
     return () => {
-      socket.off('connect', handleConnection);
-      socket.off(PLAYER_MOVED, handleMove);
-      socket.off(RESTART_GAME, handleGameRestart);
+      socket.disconnect();
     };
   }, [gameState.id]);
 
@@ -152,10 +150,11 @@ export default function GameView() {
           >
             {gameState.board.map((row, i) => {
               return (
-                <div className='flex p-1 gap-2'>
+                <div key={i} className='flex p-1 gap-2'>
                   {row.map((_, j) => {
                     return (
                       <div
+                        key={`${i},${j}`}
                         className={clsx(
                           'rounded-full h-12 w-12 transition duration-300',
                           {
@@ -186,7 +185,7 @@ export default function GameView() {
             <p className='text-2xl font-bold'>Players in game:</p>
             <div>
               {playersInGame.map((player) => (
-                <p>{player}</p>
+                <p key={player}>{player}</p>
               ))}
             </div>
             <button
