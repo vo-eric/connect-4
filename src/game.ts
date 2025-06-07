@@ -45,10 +45,10 @@ export const move = (game: Game, column: number): Game => {
     }
   }
 
-  const hasWinner = determineWinner(newBoard, game.currentPlayer);
+  const winner = determineWinner(newBoard, game.currentPlayer);
 
-  if (!game.winningPlayer && hasWinner) {
-    const { blackWins, redWins } = getUpdatedScore(game);
+  if (!game.winningPlayer && winner) {
+    const { blackWins, redWins } = getUpdatedScore(game, winner);
     return {
       ...game,
       board: newBoard,
@@ -58,7 +58,7 @@ export const move = (game: Game, column: number): Game => {
     };
   }
 
-  if (!hasWinner && newBoard.flat().every((cell) => cell !== null)) {
+  if (!winner && newBoard.flat().every((cell) => cell !== null)) {
     return {
       ...game,
       board: newBoard,
@@ -120,17 +120,20 @@ export const determineWinner = (
 };
 
 export const getUpdatedScore = (
-  game: Game
+  game: Game,
+  winner: Winner
 ): { blackWins: number; redWins: number } => {
-  if (game.winningPlayer === 'B') {
+  if (winner === 'B') {
     return {
       blackWins: game.blackWins + 1,
       redWins: game.redWins,
     };
-  } else {
+  } else if (winner === 'R') {
     return {
       blackWins: game.blackWins,
       redWins: game.redWins + 1,
     };
+  } else {
+    return { blackWins: game.blackWins, redWins: game.redWins };
   }
 };

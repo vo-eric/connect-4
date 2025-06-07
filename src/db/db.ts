@@ -43,14 +43,12 @@ export class ConnectFourDbAPI implements ConnectFourAPIInterface {
         board: updatedGame.board,
         currentPlayer: updatedGame.currentPlayer,
         winningPlayer: updatedGame.winningPlayer,
+        redWins: updatedGame.redWins,
+        blackWins: updatedGame.blackWins,
       })
       .where(eq(gamesTable.id, gameId));
 
-    return {
-      ...updatedGame,
-      blackWins: updatedGame.blackWins,
-      redWins: updatedGame.redWins,
-    };
+    return updatedGame;
   }
 
   async getUnfinishedGames(): Promise<Game[]> {

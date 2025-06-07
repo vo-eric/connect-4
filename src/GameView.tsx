@@ -8,7 +8,6 @@ import Celebration from './Celebration';
 import { useLoaderData } from 'react-router';
 import { io, Socket } from 'socket.io-client';
 import {
-  GAME_WON,
   PLAYER_CONNECTED,
   PLAYER_JOINED,
   PLAYER_MOVED,
